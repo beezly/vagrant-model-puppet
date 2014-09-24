@@ -7,8 +7,12 @@ FORGE
       puppetlabs-concat (>= 1.0.0)
       puppetlabs-stdlib (>= 2.4.0)
     puppetlabs-stdlib (4.3.2)
+    stahnma-epel (1.0.0)
+    stahnma-puppetlabs_yum (0.1.4)
 
 DEPENDENCIES
   puppetlabs-haproxy (>= 0)
   puppetlabs-stdlib (>= 0)
+  stahnma-epel (>= 0)
+  stahnma-puppetlabs_yum (>= 0)
 

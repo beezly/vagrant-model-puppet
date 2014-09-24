@@ -23,4 +23,6 @@ mod 'puppetlabs-stdlib'
 
 # A module from Github pre-packaged tarball
 # mod 'puppetlabs-apache', '0.6.0', :github_tarball => 'puppetlabs/puppetlabs-apache'
-mod 'puppetlabs-haproxy'
+
+mod 'stahnma-puppetlabs_yum'
+mod 'stahnma-epel'

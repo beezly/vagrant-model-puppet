@@ -1,0 +1,6 @@
+---
+classes:
+  - epel
+  - puppetlabs_yum
+default_packages:
+  - puppet

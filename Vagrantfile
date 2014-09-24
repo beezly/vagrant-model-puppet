@@ -8,48 +8,48 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   number_puppet_masters = 2
 
-  standalone_puppet_ca = number_puppet_masters > 1 ? true : false
- 
   puppet_master_memory = 512
   puppet_ca_memory = 512
-  haproxy_memory = 256
   default_box = "puppetlabs/centos-6.5-64-puppet"
+  puppet_master_addresses = []
+  puppet_master_hostnames = []
 
+  config.vm.define "puppet-ca" do |puppetca|
+    puppetca.vm.box = default_box
+    puppetca.vm.network "private_network", ip: "192.168.10.10"
+    puppetca.vm.hostname = 'puppet-ca'
+
+    puppetca.vm.provider "virtualbox" do |v|
+      v.memory = puppet_ca_memory
+    end
+      
+    puppetca.vm.provision "puppet" do |puppet|
+      puppet.module_path = "modules"
+      puppet.hiera_config_path = "hiera.yaml"
+    end
+  end
+  
   number_puppet_masters.times do |puppet_master_id|
-    config.vm.define "puppetmaster-#{puppet_master_id}" do |puppetmaster|
+    puppet_master_hostname = "puppetmaster-#{puppet_master_id+1}"
+    puppet_master_hostnames << puppet_master_hostname
+
+    config.vm.define "#{puppet_master_hostname}" do |puppetmaster|
       puppetmaster.vm.box = default_box
-      puppetmaster.vm.network "private_network", type: "dhcp"
+
+      puppetmaster_ip = "192.168.10.#{puppet_master_id+11}"
+      puppet_master_addresses << puppetmaster_ip
+
+      puppetmaster.vm.network "private_network", ip: puppetmaster_ip
+      puppetmaster.vm.hostname = "puppetmaster-#{puppet_master_id+1}"
  
       puppetmaster.vm.provider "virtualbox" do |v|
         v.memory = puppet_master_memory
       end
-    end
-  end
 
-  if standalone_puppet_ca 
-    config.vm.define "puppet-ca" do |puppetca|
-      puppetca.vm.box = default_box
-      puppetca.vm.network "private_network", type: "dhcp"
-
-      puppetca.vm.provider "virtualbox" do |v|
-        v.memory = puppet_ca_memory
+      puppetmaster.vm.provision "puppet" do |puppet|
+        puppet.module_path = "modules"
+        puppet.hiera_config_path = "hiera.yaml"
       end
     end
   end
-
-  config.vm.define "haproxy" do |haproxy|
-    haproxy.vm.box = default_box
-    haproxy.vm.network "private_network", type: "dhcp"
-
-    haproxy.vm.provider "virtualbox" do |v|
-      v.memory = haproxy_memory
-    end
-
-    config.vm.provision "puppet" do |puppet|
-      puppet.manifest_file = "haproxy.pp"
-      puppet.module_path = "modules"
-    end
-
-  end
-
 end

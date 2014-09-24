@@ -1,0 +1,6 @@
+---
+default_packages:
+  - puppet
+  - puppet-server
+  - httpd
+  - mod_passenger
